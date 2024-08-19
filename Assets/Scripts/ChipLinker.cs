@@ -134,7 +134,7 @@ public class ChipLinker : MonoBehaviour
 
         foreach (int column in columnsToCheck)
         {
-            for (int y = 1; y < _chipGrid.Height; y++)
+            for (int y = 0; y < _chipGrid.Height; y++)
             {
                 if (_chipGrid.GridArray[column, y] == null)
                 {
@@ -187,7 +187,7 @@ public class ChipLinker : MonoBehaviour
     private static IEnumerator SmoothMoveChip(GameObject chip, Vector3 targetPosition)
     {
         float elapsedTime = 0f;
-        float duration = 0.08f;
+        float duration = 0.07f;
         Vector3 startPosition = chip.transform.position;
 
         while (elapsedTime < duration)
