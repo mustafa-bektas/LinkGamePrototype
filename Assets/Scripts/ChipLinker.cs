@@ -6,6 +6,7 @@ using Random = UnityEngine.Random;
 
 public class ChipLinker : MonoBehaviour
 {
+    [SerializeField] private Camera mainCamera;
     private ChipGrid _chipGrid;
     private readonly List<GameObject> _linkedChips = new List<GameObject>();
     private bool _isLinking = false;
@@ -42,9 +43,9 @@ public class ChipLinker : MonoBehaviour
 
     private void OnMouseDown()
     {
-        if (Camera.main != null)
+        if (mainCamera)
         {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
 
             if (hit.collider)
@@ -62,9 +63,9 @@ public class ChipLinker : MonoBehaviour
 
     private void OnMouseDrag()
     {
-        if (Camera.main)
+        if (mainCamera)
         {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector3 mousePos = mainCamera.ScreenToWorldPoint(Input.mousePosition);
             RaycastHit2D hit = Physics2D.Raycast(mousePos, Vector2.zero);
 
             if (hit.collider)
@@ -155,7 +156,12 @@ public class ChipLinker : MonoBehaviour
 
         foreach (var coroutine in moveCoroutines)
         {
-            yield return StartCoroutine(coroutine);
+            StartCoroutine(coroutine);
+        }
+
+        foreach (var coroutine in moveCoroutines)
+        {
+            yield return coroutine;
         }
     }
 
@@ -180,7 +186,12 @@ public class ChipLinker : MonoBehaviour
 
         foreach (var coroutine in spawnCoroutines)
         {
-            yield return StartCoroutine(coroutine);
+            StartCoroutine(coroutine);
+        }
+
+        foreach (var coroutine in spawnCoroutines)
+        {
+            yield return coroutine;
         }
     }
 
@@ -202,6 +213,6 @@ public class ChipLinker : MonoBehaviour
     
     private static bool IsAdjacent(int x1, int y1, int x2, int y2)
     {
-        return Mathf.Abs(x1 - x2) + Mathf.Abs(y1 - y2) == 1;
+        return Mathf.Abs(x1 - x2) <= 1 && Mathf.Abs(y1 - y2) <= 1;
     }
 }
