@@ -1742,11 +1742,11 @@ MonoBehaviour:
   gridY: 8
   goal: 20
   moveLimit: 20
-  chipSprites:
-  - {fileID: 21300000, guid: 5ece65ef4a6f7ee43a5408de50a645ce, type: 3}
-  - {fileID: 21300000, guid: 63730d407c65d0546be6b57498b27215, type: 3}
-  - {fileID: 21300000, guid: f166f83424b739d49aa5b82170634e15, type: 3}
-  - {fileID: 21300000, guid: 5aa642a1b3643f3408288386818f7d8d, type: 3}
+  chipPrefabs:
+  - {fileID: 1692789139575196345, guid: b349e38b9332366428abb954e3873cb7, type: 3}
+  - {fileID: 1692789139575196345, guid: 566614e8ab5673b439a7b492e93593d5, type: 3}
+  - {fileID: 1692789139575196345, guid: 32371af296931354ea938b7a471b3fe4, type: 3}
+  - {fileID: 1692789139575196345, guid: a82477aab20dd714aac96670a09a4c2a, type: 3}
 --- !u!1 &882797279
 GameObject:
   m_ObjectHideFlags: 0

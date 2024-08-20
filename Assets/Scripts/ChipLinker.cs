@@ -6,6 +6,8 @@ using Random = UnityEngine.Random;
 
 public class ChipLinker : MonoBehaviour
 {
+    public event Action<string, int> OnChipRemoved;
+    
     [SerializeField] private Camera mainCamera;
     private ChipGrid _chipGrid;
     private readonly List<GameObject> _linkedChips = new List<GameObject>();
@@ -110,6 +112,8 @@ public class ChipLinker : MonoBehaviour
                     columnsToCheck.Add(x);
                 }
             }
+            
+            OnChipRemoved?.Invoke(_firstChip.tag, _linkedChips.Count);
 
             _linkedChips.Clear();
             _lineRenderer.positionCount = 0;

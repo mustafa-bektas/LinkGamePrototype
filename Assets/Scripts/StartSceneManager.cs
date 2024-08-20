@@ -11,7 +11,7 @@ public class StartSceneManager : MonoBehaviour
     public int goal;
     public int moveLimit;
     
-    public Sprite[] chipSprites;
+    public GameObject[] chipPrefabs;
     private int _goalChipIndex;
     
     private TMPro.TextMeshProUGUI _gridXText;
@@ -79,7 +79,7 @@ public class StartSceneManager : MonoBehaviour
         GameSettings.GridY = gridY;
         GameSettings.Goal = goal;
         GameSettings.MoveLimit = moveLimit;
-        GameSettings.GoalChipName = chipSprites[_goalChipIndex].name;
+        GameSettings.GoalChipTag = chipPrefabs[_goalChipIndex].tag;
 
         UnityEngine.SceneManagement.SceneManager.LoadScene("MainGameScene");
     }
@@ -105,7 +105,8 @@ public class StartSceneManager : MonoBehaviour
     
     private void UpdateGoalChipSprite()
     {
-        _goalChipIndex = (_goalChipIndex + 1) % chipSprites.Length;
-        GameObject.Find("GoalChipSprite").GetComponent<Image>().sprite = chipSprites[_goalChipIndex];
+        _goalChipIndex = (_goalChipIndex + 1) % chipPrefabs.Length;
+        GameObject.Find("GoalChipSprite").GetComponent<Image>().sprite = 
+            chipPrefabs[_goalChipIndex].transform.Find("Chip").GetComponent<SpriteRenderer>().sprite;
     }
 }
