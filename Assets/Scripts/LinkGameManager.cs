@@ -1,21 +1,22 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.Serialization;
+using UnityEngine.UI;
 
 public class LinkGameManager : MonoBehaviour
 {
+    public ChipGrid ChipGrid;
     [SerializeField] private GameObject[] chipPrefabs;
+    [SerializeField] private GameObject gameOverPanel;
     [SerializeField] private Camera mainCamera;
     private int _gridX;
     private int _gridY;
     private int _goal;
     private int _moveLimit;
     private string _goalChipTag;
-    
-    public ChipGrid ChipGrid;
     private ChipLinker _chipLinker;
+    
+    private TMPro.TextMeshProUGUI _goalText;
+    private TMPro.TextMeshProUGUI _moveLimitText;
     
     void Awake()
     {
@@ -24,6 +25,14 @@ public class LinkGameManager : MonoBehaviour
         _goal = GameSettings.Goal;
         _moveLimit = GameSettings.MoveLimit;
         _goalChipTag = GameSettings.GoalChipTag;
+        
+        _goalText = GameObject.Find("GoalLeftText").GetComponent<TMPro.TextMeshProUGUI>();
+        _goalText.text = _goal.ToString();
+        
+        _moveLimitText = GameObject.Find("MovesLeftText").GetComponent<TMPro.TextMeshProUGUI>();
+        _moveLimitText.text = _moveLimit.ToString();
+        
+        SetGoalChipSprite();
         
         ChipGrid = new ChipGrid(_gridX, _gridY, chipPrefabs);
         CenterCameraOnGrid();
@@ -51,6 +60,82 @@ public class LinkGameManager : MonoBehaviour
     
     private void UpdateScoreAndMovesLeft(string chipTag, int chipCountInLink)
     {
+        _moveLimit--;
+        _moveLimit = Mathf.Max(0, _moveLimit);
+        _moveLimitText.text = _moveLimit.ToString();
+
+        if (chipTag == _goalChipTag)
+        {
+            _goal -= chipCountInLink;
+            _goal = Mathf.Max(0, _goal);
+            _goalText.text = _goal.ToString();
+        }
         
+        CheckForWinOrLose();
+    }
+    
+    private void SetGoalChipSprite()
+    {
+        foreach (var chipPrefab in chipPrefabs)
+        {
+            if (chipPrefab.CompareTag(_goalChipTag))
+            {
+                GameObject.Find("GoalChipSprite").GetComponent<Image>().sprite = chipPrefab.transform.Find("Chip").GetComponent<SpriteRenderer>().sprite;
+                break;
+            }
+        }
+    }
+    
+    private void CheckForWinOrLose()
+    {
+        if (_goal <= 0)
+        {
+            // Win
+            ShowGameOverPanel("You Win!");
+        }
+        else if (_moveLimit <= 0)
+        {
+            // Lose
+            ShowGameOverPanel("You Lose!");
+        }
+    }
+
+    private IEnumerator FadeInGameOverPanel(CanvasGroup canvasGroup)
+    {
+        float duration = 0.5f;
+        float elapsedTime = 0f;
+
+        while (elapsedTime < duration)
+        {
+            elapsedTime += Time.deltaTime;
+            canvasGroup.alpha = Mathf.Clamp01(elapsedTime / duration);
+            yield return null;
+        }
+        canvasGroup.alpha = 1f;
+    }
+
+    private void ShowGameOverPanel(string message)
+    {
+        gameOverPanel.SetActive(true);
+
+        TMPro.TextMeshProUGUI gameOverText = gameOverPanel.transform.Find("GameOverText").GetComponent<TMPro.TextMeshProUGUI>();
+        gameOverText.text = message;
+
+        Button restartButton = gameOverPanel.transform.Find("RestartButton").GetComponent<Button>();
+        restartButton.onClick.AddListener(RestartGame);
+
+        CanvasGroup canvasGroup = gameOverPanel.GetComponent<CanvasGroup>();
+        if (canvasGroup == null)
+        {
+            canvasGroup = gameOverPanel.AddComponent<CanvasGroup>();
+        }
+        canvasGroup.alpha = 0f;
+
+        StartCoroutine(FadeInGameOverPanel(canvasGroup));
+    }
+    
+    private void RestartGame()
+    {
+        UnityEngine.SceneManagement.SceneManager.LoadScene("StartScene");
     }
 }
