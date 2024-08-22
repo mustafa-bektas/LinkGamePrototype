@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using Data;
 using UnityEngine;
@@ -22,8 +23,11 @@ namespace Core
         private TMPro.TextMeshProUGUI _goalText;
         private TMPro.TextMeshProUGUI _moveLimitText;
 
+        private float _aspectRatioConstant;
+
         void Awake()
         {
+            _aspectRatioConstant = 0.625f / mainCamera.aspect;
             InitializeGameSettings();
             InitializeUIElements();
             SetupGrid();
@@ -34,6 +38,11 @@ namespace Core
         {
             _chipLinker = GetComponent<ChipLinker>();
             _chipLinker.OnChipRemoved += UpdateScoreAndMovesLeft;
+        }
+
+        private void Update()
+        {
+            Application.targetFrameRate = 60;
         }
 
         private void InitializeGameSettings()
@@ -65,7 +74,7 @@ namespace Core
         {
             if (mainCamera)
             {
-                mainCamera.orthographicSize = Mathf.Max(_gridX, _gridY);
+                mainCamera.orthographicSize = Mathf.Max(_gridX, _gridY) * _aspectRatioConstant;
                 mainCamera.transform.position = new Vector3((_gridX - 1) / 2f, (_gridY - 1) / 2f, mainCamera.transform.position.z);
             }
         }
